@@ -5,21 +5,31 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import AppContent from './components/app-content'
 import ajax from '@fdaciuk/ajax'
 
+const initialReposState = {
+  repos: [],
+  pagination: {
+    total: 1,
+    activePage: 1
+  }
+}
+
 class App extends Component {
   constructor () {
     super()
     this.state = {
       userinfo: null,
-      repos: [],
-      starred: [],
+      repos: initialReposState,
+      starred: initialReposState,
       isFetching: false
     }
+
+    this.perPage = 3
   }
 
-  getGitHubApiUrl (username, type) {
+  getGitHubApiUrl (username, type, page = 1) {
     const internalType = type ? `/${type}` : ''
     const internalUser = username ? `/${username}` : ''
-    return `https://api.github.com/users${internalUser}${internalType}`
+    return `https://api.github.com/users${internalUser}${internalType}?per_page=${this.perPage}&page=${page}`
   }
 
   handleSearch (e) {
@@ -40,31 +50,40 @@ class App extends Component {
               following: result.following,
               avatar: result.avatar_url
             },
-            repos: [],
-            starred: []
+            repos: initialReposState,
+            starred: initialReposState
           })
         })
         .always(() => this.setState({ isFetching: false }))
     }
   }
 
-  getRepos (type) {
+  getRepos (type, page) {
     return () => {
       const username = this.state.userinfo.login
       const altType = type === 'repos' ? 'starred' : 'repos'
       this.setState({
-        [altType]: []
+        [altType]: initialReposState
       })
-      ajax().get(this.getGitHubApiUrl(username, type))
-        .then((result) => {
+      ajax().get(this.getGitHubApiUrl(username, type, page))
+        .then((result, xhr) => {
+          const linkHeader = xhr.getResponseHeader('Link') || ''
+          const totalPagesMatch = linkHeader.match(/&page=(\d+)>; rel="last"/)
+
           this.setState({
-            [type]: result.map((repo) => {
-              return {
-                name: repo.name,
-                link: repo.html_url,
-                language: repo.language
+            [type]:  {
+              repos: result.map((repo) => {
+                  return {
+                    name: repo.name,
+                    link: repo.html_url,
+                    language: repo.language
+                  }
+                }),
+              pagination: {
+                total: totalPagesMatch ? +totalPagesMatch[1] : this.state[type].pagination.total,
+                activePage: page
               }
-            })
+            }
           })
         })
     }
@@ -80,6 +99,7 @@ class App extends Component {
         handleSearch={(e) => this.handleSearch(e)}
         getRepos={this.getRepos('repos')}
         getStarred={this.getRepos('starred')}
+        handlePagination={(type, page) => this.getRepos(type, page)()}
       />
     )
   }

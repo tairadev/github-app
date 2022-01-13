@@ -8,7 +8,7 @@ import Header from './header'
 import Repos from './repos'
 import Loader from './loader'
 
-const AppContent = ({ userinfo, getRepos, getStarred, repos, starred, isFetching, handleSearch }) => {
+const AppContent = ({ userinfo, getRepos, getStarred, repos, starred, isFetching, handleSearch, handlePagination }) => {
   return (
     <div className='container mt-5'>
       <div id='main-content' className='row justify-content-center'>
@@ -18,30 +18,38 @@ const AppContent = ({ userinfo, getRepos, getStarred, repos, starred, isFetching
           {isFetching && <Loader />}
           {userinfo && <UserInfo userinfo={userinfo} />}
           {userinfo && <Actions getRepos={getRepos} getStarred={getStarred} />}
-          {!!repos.length && <Repos
+          {!!repos.repos.length && <Repos
             className='repos'
             title='Repositórios'
             repos={repos}
-                             />}
-          {!!starred.length && <Repos
+            handlePagination={(clicked) => handlePagination('repos', clicked)}
+          />}
+          {!!starred.repos.length && <Repos
             className='starred'
             title='Favoritos'
             repos={starred}
-                               />}
+            handlePagination={(clicked) => handlePagination('starred', clicked)}
+          />}
         </div>
       </div>
     </div>
   )
 }
 
+const reposPropTypesShape = {
+  repos: PropTypes.array.isRequired,
+  pagination: PropTypes.object.isRequired
+}
+
 AppContent.propTypes = {
   userinfo: PropTypes.object,
-  repos: PropTypes.array.isRequired,
-  starred: PropTypes.array.isRequired,
+  repos: PropTypes.shape(reposPropTypesShape).isRequired,
+  starred: PropTypes.shape(reposPropTypesShape).isRequired,
   isFetching: PropTypes.bool.isRequired,
   handleSearch: PropTypes.func.isRequired,
   getRepos: PropTypes.func.isRequired,
-  getStarred: PropTypes.func.isRequired
+  getStarred: PropTypes.func.isRequired,
+  handlePagination: PropTypes.func.isRequired
 }
 
 export default AppContent
