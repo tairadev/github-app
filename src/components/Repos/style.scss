@@ -1,0 +1,32 @@
+.repos,
+.starred {
+  ul {
+    li {
+      border-bottom: 1px solid #ccc;
+      padding: 24px 0;
+      a {
+        display: inline-block;
+        margin: 0 0 40px;
+      }
+      h3 {
+        color: #9198a1;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        .circle {
+          position: relative;
+          top: 1px;
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border: 1px solid #ffffff26;
+          border-radius: 50%;
+          &.null {
+            background-color: #212830;
+          }
+        }
+      }
+    }
+  }
+}
