@@ -7,6 +7,7 @@ import { UserInfo } from '../interfaces/UserInfo';
 import { Repo } from '../interfaces/Repo';
 
 import logo from '../assets/images/logo.svg';
+import loading from '../assets/images/loading.svg';
 
 interface reposObj {
   repos: Repo[];
@@ -41,8 +42,10 @@ class AppContent extends Component<AppContentProps> {
           handleKeyDown={this.props.handleKeyDown}
         />
         {this.props.notFound && <h2>Usuário não encontrado!</h2>}
-        {this.props.isRequestingUser && <p>Carregando...</p>}
-        {!!this.props.userInfo && (
+        {this.props.isRequestingUser && (
+          <img src={loading} alt="Carregando..." className="loading-icon" />
+        )}
+        {!!this.props.userInfo && !this.props.isRequestingUser && (
           <>
             <UserInfos userInfo={this.props.userInfo} />
             <Actions

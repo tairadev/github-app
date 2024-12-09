@@ -36,6 +36,12 @@ h1 {
   }
 }
 
+.loading-icon {
+  display: block;
+  width: 35px;
+  margin: 15px auto;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

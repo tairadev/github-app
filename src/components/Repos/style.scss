@@ -1,6 +1,7 @@
 .repos,
 .starred {
   ul {
+    margin: 0 0 100px;
     li {
       border-bottom: 1px solid #ccc;
       padding: 24px 0;
@@ -27,6 +28,13 @@
           }
         }
       }
+      &:last-child {
+        border: 0;
+      }
     }
+  }
+
+  p {
+    margin: 20px 0;
   }
 }
